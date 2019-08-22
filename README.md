@@ -1,3 +1,5 @@
+环境：
+Angular CLI: 8.2.2
 
 # 到 p72（ chapter 4.2)
 
