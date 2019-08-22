@@ -9,6 +9,7 @@ import { debounceTime, map } from 'rxjs/operators';
   styleUrls: ['./todo-header.component.css']
 })
 export class TodoHeaderComponent implements OnInit {
+  inputValue: string = '';
   @Input() placeholder: string = 'What needs to be done? default value';
   @Input() delay: number = 300;
 
@@ -24,7 +25,7 @@ export class TodoHeaderComponent implements OnInit {
             );
 
       event$.subscribe( (input: string)  => {
-        console.log(`in ping089  ` + typeof input );
+        console.log(`in ping089  ` + typeof input  +  ", input: " + input  ) ;
         this.textChanges.emit( input ) ;
    });
   }
@@ -34,6 +35,7 @@ export class TodoHeaderComponent implements OnInit {
 
   enterUp() {
     this.onEnterUp.emit(true);
+    this.inputValue = '';
   }
 
 }

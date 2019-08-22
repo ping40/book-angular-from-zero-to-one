@@ -1,28 +1,20 @@
-# HelloAngular
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.2.1.
+# 到 p72（ chapter 4.2)
 
-## Development server
+存在的问题是：在 todo header 的地方，如果回车过快，会导致输入内容是空，原因是
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+```typescript
+constructor(private elementRef: ElementRef) {
+    const event$ = fromEvent(elementRef.nativeElement, 'keyup')
+            .pipe(
+              map((e:any) => e.target.value),
+              debounceTime(this.delay)  --> 告知父组件，有400毫秒延迟
+            );
 
-## Code scaffolding
+      event$.subscribe( (input: string)  => {
+        console.log(`in ping089  ` + typeof input  +  ", input: " + input  ) ;
+        this.textChanges.emit( input ) ;
+   });
+  }
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
-# book-angular-from-zero-to-one
