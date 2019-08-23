@@ -3,9 +3,9 @@ import { NgModule } from '@angular/core';
 
 import { FormsModule }     from '@angular/forms';
       
-
-import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-import { InMemoryTodoDbService }  from './todo/todo-data';
+//因为引入 json-server,所以要屏蔽调内存web
+//import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
+//import { InMemoryTodoDbService }  from './todo/todo-data';
     
 import {  HttpClientModule
 }       from '@angular/common/http';
@@ -25,7 +25,7 @@ import { TodoModule } from './todo/todo.module';
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    HttpClientInMemoryWebApiModule.forRoot(  InMemoryTodoDbService ),
+    //HttpClientInMemoryWebApiModule.forRoot(  InMemoryTodoDbService ),
     routing12,
     TodoModule
   ],

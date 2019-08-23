@@ -16,7 +16,8 @@ const  httpOptions = {
   providedIn: 'root'
 })
 export class TodoService {
-  private api_url = 'pingkaoiadsfki/pingka' ;
+//  private api_url = 'pingkaoiadsfki/pingka' ;
+  private api_url = 'http://localhost:3000/pingka' ;
 
   private headerss = new Headers({'Content-type': 'application/json'});
         
