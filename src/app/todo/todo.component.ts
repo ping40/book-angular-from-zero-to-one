@@ -4,7 +4,7 @@ import { Todo }  from "./todo.model";
 import {TodoService} from './todo.service';
 
 @Component({
-  selector: 'app-todo',
+//  selector: 'app-todo', 因为没有用到，所以可以删除
   templateUrl: './todo.component.html',
   styleUrls: ['./todo.component.css'],
   providers: [TodoService]

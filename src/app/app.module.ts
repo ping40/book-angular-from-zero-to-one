@@ -10,29 +10,24 @@ import { InMemoryTodoDbService }  from './todo/todo-data';
 import {  HttpClientModule
 }       from '@angular/common/http';
         
- import { AppRoutingModule } from './app-routing.module';
+ import { routing12 } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { AuthService } from './core/auth.service';
-import { TodoComponent } from './todo/todo.component';
-import { TodoFooterComponent } from './todo/todo-footer/todo-footer.component';
-import { TodoHeaderComponent } from './todo/todo-header/todo-header.component';
+import { TodoModule } from './todo/todo.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
-    TodoComponent,
-    TodoFooterComponent,
-    TodoHeaderComponent
+    LoginComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    HttpClientInMemoryWebApiModule.forRoot(  InMemoryTodoDbService )
-
+    HttpClientInMemoryWebApiModule.forRoot(  InMemoryTodoDbService ),
+    routing12,
+    TodoModule
   ],
   providers: [
     {provide: 'auth', useClass: AuthService}

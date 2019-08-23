@@ -3,17 +3,21 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { LoginComponent } from './login/login.component';
 
-import { TodoComponent } from './todo/todo.component';
 
-
-const routes: Routes = [
-  {path:'', redirectTo: 'todo', pathMatch: 'full'},
-  {path: 'todo', component:  TodoComponent},
-  {path: 'login', component:  LoginComponent}
+export const routes: Routes = [
+  {
+    path:'', 
+    redirectTo: 'todo', 
+    pathMatch: 'full'
+  },
+  {
+    path: 'login', 
+    component:  LoginComponent
+  },
+  {
+    path: 'todo', 
+    redirectTo: 'todo'
+  }
 ];
 
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule { }
+export const routing12 = RouterModule.forRoot(routes);
