@@ -4,7 +4,7 @@ import { TodoComponent } from './todo.component';
 
 const routes: Routes = [
   {
-    path: 'todo/:filter',
+    path: 'todo/:filter', // filter 似乎是关键词，如果修改为f123， 无效
     component: TodoComponent
   }
 ];

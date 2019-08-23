@@ -28,6 +28,7 @@ export class TodoListComponent {
     console.log( " call onToggleTriggered ");
     this.onToggleTodo.emit(todo);
   }
+  
   onToggleAllTriggered() {
 
     console.log( " call onToggleAllTriggered ");

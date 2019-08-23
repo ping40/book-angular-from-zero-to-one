@@ -70,7 +70,7 @@ export class TodoComponent implements OnInit {
           .deleteTodoById(todo.id)
           .subscribe(
             t => {
-              console.log(`in todo.component.ts  removeTodo ${t}`);
+              console.log(`in todo.component.ts  removeTodo i =${i}, total: ${this.todos.length}`);
               this.todos = [
                 ...this.todos.slice(0,i),
                 ...this.todos.slice(i+1)
@@ -83,6 +83,35 @@ export class TodoComponent implements OnInit {
      console.log(` in onTextChanges    ${v} `);
 
     this.desc = v;
+   }
+
+   toggleAll() {
+     this.todos.forEach(
+       todo => {
+         this.toggleTodo(todo);
+       }
+     );
+   }
+
+   clearCompleted() {
+     const todos = this.todos.filter(
+       todo => {
+         let ok =  todo.completed == true;
+
+         console.log(` in clearComplated ok : ${ok}`);
+         return ok;
+       }
+     );
+
+     // 存在 并发消息的问题
+     todos.forEach(
+       todo => {
+         console.log(` in clearComplated ${todo.desc}`);
+         this.removeTodo(todo);
+       }
+     );
+
+     this.filterTodos('ALL'); // 如果没有这个，页面显示是错误的
    }
 
 }
