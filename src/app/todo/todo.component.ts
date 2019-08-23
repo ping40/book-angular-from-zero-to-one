@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { Todo }  from "./todo.model";
 import {TodoService} from './todo.service';
+import { ActivatedRoute, Router, Params } from '@angular/router';
 
 @Component({
 //  selector: 'app-todo', 因为没有用到，所以可以删除
@@ -14,10 +15,26 @@ export class TodoComponent implements OnInit {
   desc = '';
 
 
-  constructor(private tds:TodoService) { }
+  constructor(
+    private tds:TodoService,
+    private route: ActivatedRoute,
+    private router: Router) { }
 
   ngOnInit() {
-    this.getTodos();
+    this.route.params.forEach(
+      (p: Params) => {
+        let f123 = p['filter'];
+        this.filterTodos(f123);
+      }
+    );
+    
+    this.filterTodos('ALL');
+  }
+
+  filterTodos(f123: string) {
+    this.tds
+      .filterTodos(f123)
+      .subscribe(t => this.todos = t );
   }
 
   addTodo(){
@@ -33,37 +50,33 @@ export class TodoComponent implements OnInit {
 
    toggleTodo(todo: Todo) {
     const i = this.todos.indexOf(todo) ;
-    console.log( `in toggleTodo component.ts   ping001 ${i} `);
+    console.log( `in toggleTodo in todo.component.ts   ping001 ${i} `);
     this.tds
           .toggleTodo(todo)
           .subscribe(
             _ => {
-              console.log( `in toggleTodo component.ts   ping002  `);
-              this.getTodos();
+              console.log( `in toggleTodo in todo.component.ts   ping002  `);
+              this.filterTodos('ALL');
             }
           );
    }
 
    removeTodo(todo: Todo): void {
+     
 
+    console.log( `call  removeTodo in todo.component.ts `);
     const i = this.todos.indexOf(todo) ;
     this.tds
           .deleteTodoById(todo.id)
           .subscribe(
             t => {
-              console.log(`removeTodo ${t}`);
+              console.log(`in todo.component.ts  removeTodo ${t}`);
               this.todos = [
                 ...this.todos.slice(0,i),
                 ...this.todos.slice(i+1)
               ];
             }
           ) ;
-   }
-
-   getTodos(): void {
-     this.tds
-            .getTodos()
-            .subscribe(t => this.todos = t );
    }
 
    onTextChanges(v) {

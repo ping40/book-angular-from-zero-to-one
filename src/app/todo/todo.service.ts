@@ -16,8 +16,8 @@ const  httpOptions = {
   providedIn: 'root'
 })
 export class TodoService {
-//  private api_url = 'pingkaoiadsfki/pingka' ;
-  private api_url = 'http://localhost:3000/pingka' ;
+  private api_url = 'pingkaoiadsfki/pingka' ;
+//  private api_url = 'http://localhost:3000/pingka' ;
 
   private headerss = new Headers({'Content-type': 'application/json'});
         
@@ -69,8 +69,18 @@ export class TodoService {
                     );
   }
 
-  getTodos(): Observable<Todo[]> {
-    return this.http.get<Todo[]>(this.api_url);
+  filterTodos(f123: string): Observable<Todo[]> {
+    let  myurl: string = `${this.api_url}`;
+    switch(f123) {
+      case 'ACTIVE':
+        myurl = `${this.api_url}?completed=false`;
+        break;
+      case 'COMPLETED':
+          myurl = `${this.api_url}?completed=true`;
+          break;
+    }
+    console.log(`in todo.service.ts , myurl =  ${myurl}  , ${f123}`);
+    return this.http.get<Todo[]>(myurl);
   }
 
   private handleError<T> (operation = 'operation', result?: T) {
