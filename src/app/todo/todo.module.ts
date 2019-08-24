@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import {  HttpClientModule
 }       from '@angular/common/http';
         
-import { routing } from './todo-routing.module'
+import {  TodoRoutingModule } from './todo-routing.module'
 
 import { TodoComponent } from './todo.component';
 import { TodoFooterComponent } from './todo-footer/todo-footer.component';
@@ -19,7 +19,7 @@ import { TodoListComponent } from './todo-list/todo-list.component';
     CommonModule,
     FormsModule,
     HttpClientModule,
-    routing
+    TodoRoutingModule
   ],
   declarations: [
     TodoComponent,
@@ -33,3 +33,4 @@ import { TodoListComponent } from './todo-list/todo-list.component';
     ],
 })
 export class TodoModule {}
+

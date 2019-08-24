@@ -10,7 +10,7 @@ import { InMemoryTodoDbService }  from './todo/todo-data';
 import {  HttpClientModule
 }       from '@angular/common/http';
         
- import { routing12 } from './app-routing.module';
+ import {  AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { AuthService } from './core/auth.service';
@@ -27,7 +27,7 @@ import { CoreModule } from './core/core.module';
     FormsModule,
     HttpClientModule,
 //    HttpClientInMemoryWebApiModule.forRoot(  InMemoryTodoDbService ),
-    routing12,
+    AppRoutingModule,
     TodoModule,
     CoreModule
   ],

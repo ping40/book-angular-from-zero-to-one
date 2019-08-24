@@ -15,7 +15,7 @@
     {
       "id": "0d2596c4-216b-df3d-1608-633899c5a549",
       "desc": "go to school",
-      "completed": false,
+      "completed": true,
       "userId": 1
     },
     {
