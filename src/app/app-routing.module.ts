@@ -15,6 +15,10 @@ const routes: Routes = [
   {
     path: 'todo',
     redirectTo: 'todo/ALL'
+  },
+  {
+    path: "playground",
+    loadChildren: './playground/playground.module#PlaygroundModule'  // 没有 ./ 就报找不到模块
   }
 ];
 
