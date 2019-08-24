@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UUID } from 'angular2-uuid'
-import { Todo } from './todo.model';
+import { Todo } from '../domain/entities';
 
 import { catchError, map, tap } from 'rxjs/operators';
 
@@ -16,21 +16,21 @@ const  httpOptions = {
   providedIn: 'root'
 })
 export class TodoService {
-  private api_url = 'pingkaoiadsfki/pingka' ;
-//  private api_url = 'http://localhost:3000/pingka' ;
+//  private api_url = 'pingkaoiadsfki/todos' ;
+  private api_url = 'http://localhost:3000/todos' ;
 
   private headerss = new Headers({'Content-type': 'application/json'});
-        
-
-
 
   constructor(private http: HttpClient) { }
 
   addTodo(todoItem: string): Observable<Todo> {
+    const userId: number = +localStorage.getItem('userId');
+
     let todo = {
       id: UUID.UUID(),
       desc: todoItem,
-      completed: false
+      completed: false,
+      userId: userId
     }
     console.log(`in addTodo todo.service.ts  ${todo.id}`);
 
@@ -70,13 +70,16 @@ export class TodoService {
   }
 
   filterTodos(f123: string): Observable<Todo[]> {
-    let  myurl: string = `${this.api_url}`;
+
+    const userId: number = +localStorage.getItem('userId');
+
+    let  myurl: string = `${this.api_url}?userId=${userId}`;
     switch(f123) {
       case 'ACTIVE':
-        myurl = `${this.api_url}?completed=false`;
+        myurl = `${this.api_url}?completed=false&userId=${userId}`;
         break;
       case 'COMPLETED':
-          myurl = `${this.api_url}?completed=true`;
+          myurl = `${this.api_url}?completed=true&userId=${userId}`;
           break;
     }
     console.log(`in todo.service.ts , myurl =  ${myurl}  , ${f123}`);

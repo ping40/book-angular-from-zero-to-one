@@ -15,6 +15,7 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { AuthService } from './core/auth.service';
 import { TodoModule } from './todo/todo.module';
+import { CoreModule } from './core/core.module';
 
 @NgModule({
   declarations: [
@@ -25,9 +26,10 @@ import { TodoModule } from './todo/todo.module';
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    HttpClientInMemoryWebApiModule.forRoot(  InMemoryTodoDbService ),
+//    HttpClientInMemoryWebApiModule.forRoot(  InMemoryTodoDbService ),
     routing12,
-    TodoModule
+    TodoModule,
+    CoreModule
   ],
   providers: [
     {provide: 'auth', useClass: AuthService}
