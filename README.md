@@ -27,7 +27,7 @@ constructor(private elementRef: ElementRef) {
 
 # p223   版本引入了Rx
 
-# master    版本引入了Redux
+# master    没有引入Redux
 
 
 
