@@ -3,6 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { Todo }  from "../domain/entities";
 import {TodoService} from './todo.service';
 import { ActivatedRoute, Router, Params } from '@angular/router';
+import { Observable } from 'rxjs';
+
+import { pluck } from 'rxjs/operators';
 
 @Component({
 //  selector: 'app-todo', 因为没有用到，所以可以删除
@@ -11,9 +14,8 @@ import { ActivatedRoute, Router, Params } from '@angular/router';
   providers: [TodoService]
 })
 export class TodoComponent implements OnInit {
-  todos:  Todo[] = [];
-  desc = '';
-
+  todos:  Observable<Todo[]>;
+  desc: string = "";
 
   constructor(
     private tds:TodoService,
@@ -21,62 +23,28 @@ export class TodoComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
-    this.route.params.forEach(
-      (p: Params) => {
-        let f123 = p['filter'];
-        this.filterTodos(f123);
-      }
-    );
-    
-    this.filterTodos('ALL');
-  }
-
-  filterTodos(f123: string) {
-    this.tds
-      .filterTodos(f123)
-      .subscribe(t => this.todos = t );
+    this.route.params
+      .pipe(
+          pluck("filter")
+      )
+      .subscribe( filter => {
+        this.tds.filterTodos(filter);
+        this.todos = this.tds.todos;
+      });
+     
   }
 
   addTodo(){
-    this.tds.addTodo( this.desc )
-      .subscribe(
-        v => {
-          console.log( `in add Todo  ping001 ${v} `);
-          this.todos = [...this.todos, v ];
-          this.desc = ''; 
-         } 
-      );
+    this.tds.addTodo( this.desc );
    }
 
    toggleTodo(todo: Todo) {
-    const i = this.todos.indexOf(todo) ;
-    console.log( `in toggleTodo in todo.component.ts   ping001 ${i} `);
-    this.tds
-          .toggleTodo(todo)
-          .subscribe(
-            _ => {
-              console.log( `in toggleTodo in todo.component.ts   ping002  `);
-              this.filterTodos('ALL');
-            }
-          );
+    this.tds.toggleTodo(todo);
    }
 
    removeTodo(todo: Todo): void {
-     
-
-    console.log( `call  removeTodo in todo.component.ts `);
-    const i = this.todos.indexOf(todo) ;
-    this.tds
-          .deleteTodoById(todo.id)
-          .subscribe(
-            t => {
-              console.log(`in todo.component.ts  removeTodo i =${i}, total: ${this.todos.length}`);
-              this.todos = [
-                ...this.todos.slice(0,i),
-                ...this.todos.slice(i+1)
-              ];
-            }
-          ) ;
+      this.tds
+          .deleteTodo(todo);
    }
 
    onTextChanges(v) {
@@ -86,32 +54,11 @@ export class TodoComponent implements OnInit {
    }
 
    toggleAll() {
-     this.todos.forEach(
-       todo => {
-         this.toggleTodo(todo);
-       }
-     );
+    this.tds.toggleAll();
    }
 
    clearCompleted() {
-     const todos = this.todos.filter(
-       todo => {
-         let ok =  todo.completed == true;
-
-         console.log(` in clearComplated ok : ${ok}`);
-         return ok;
-       }
-     );
-
-     // 存在 并发消息的问题
-     todos.forEach(
-       todo => {
-         console.log(` in clearComplated ${todo.desc}`);
-         this.removeTodo(todo);
-       }
-     );
-
-     this.filterTodos('ALL'); // 如果没有这个，页面显示是错误的
+    this.tds.clearCompleted();
    }
 
 }

@@ -2,18 +2,33 @@ import { Injectable, Inject } from '@angular/core';
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { User, Auth } from '../domain/entities';
-import { Observable } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class AuthService {
+
+  auth: Auth = {hasError: true, redirectUrl: '', errMsg: 'not logged in' , user: new User() };
+  subject: ReplaySubject<Auth> = new ReplaySubject<Auth>(1);
+  
 
   constructor(
     private http: HttpClient,
     @Inject('user') private userService
     ) { }
+
+
+  getAuth(): Observable<Auth> {
+    return this.subject.asObservable();
+  }
+
+  unAuth(): void {
+    this.auth = Object.assign(
+      {},
+      this.auth,
+      {user: null, hasError: true, redirectUrl: '', errMsg: 'not logged in'});
+    this.subject.next(this.auth);
+  }
 
   loginWithCredential(username: string, password: string): Observable<Auth> {
     console.log("in loginWithCredential  begin");
@@ -48,8 +63,10 @@ export class AuthService {
                       }
                     }
 
+                    this.auth = Object.assign({}, auth);
+                    this.subject.next(this.auth);
                     console.log("in loginWithCredential return auth: "  + JSON.stringify(auth) );
-                    return auth;
+                    return this.auth;
                   })
                 );
 

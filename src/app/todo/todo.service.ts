@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UUID } from 'angular2-uuid'
 import { Todo } from '../domain/entities';
 
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, tap, filter } from 'rxjs/operators';
 
-import { Observable, of } from 'rxjs';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 
 const  httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -20,10 +20,29 @@ export class TodoService {
   private api_url = 'http://localhost:3000/todos' ;
 
   private headerss = new Headers({'Content-type': 'application/json'});
+  private userId: string;
 
-  constructor(private http: HttpClient) { }
+  private _todos: BehaviorSubject<Todo[]>; 
+  private dataStore: {  // This is where we will store our data in memory
+    todos: Todo[]
+  };
 
-  addTodo(todoItem: string): Observable<Todo> {
+  constructor(private http: HttpClient, @Inject('auth') private authService ) {
+    this.authService.getAuth()
+      .pipe(
+        //  不明白 为什么有这个错误： error TS2339: Property 'user' does not exist on type 'unknown'
+//        filter(auth => auth.user != null) 
+      )
+      .subscribe(auth => this.userId = auth.user.id);
+    this.dataStore = { todos: [] };
+    this._todos = new BehaviorSubject<Todo[]>([]);
+   }
+
+   get todos(){
+    return this._todos.asObservable();
+  }
+
+  addTodo(todoItem: string) {
     const userId: number = +localStorage.getItem('userId');
 
     let todo = {
@@ -34,42 +53,51 @@ export class TodoService {
     }
     console.log(`in addTodo todo.service.ts  ${todo.id}`);
 
-    return this.http.post<Todo>(this.api_url,  todo,  httpOptions )
-                    .pipe(
-                      tap( _ => console.log("post   ")),
-                      catchError(this.handleError<Todo>('post'))
-                    );
+    this.http.post<Todo>(this.api_url,  todo,  httpOptions )
+                   .subscribe(todo => {
+                        this.dataStore.todos = [...this.dataStore.todos, todo];
+                        this._todos.next(Object.assign({}, this.dataStore).todos);
+                   });
                     
   }
 
-  toggleTodo(todo: Todo): Observable<Todo> {
+  toggleTodo(todo: Todo) {
     const url =`${this.api_url}/${todo.id}`;
     console.log(`in toggleTodo  001 ${url}  , ${todo}`);
+    const i = this.dataStore.todos.indexOf(todo);
     let updatedTodo = Object.assign({}, todo, {completed: !todo.completed});
 
     console.log(`in toggleTodo  002 ${url}  , ${todo}, ${updatedTodo}`);
 
-    return this.http
+    this.http
               .put<Todo>(url, updatedTodo, httpOptions)
-              .pipe(
-                tap( _ => console.log(`toggleTodo  003 ${todo} `)),
-                catchError(this.handleError<Todo>('toggleTodoById'))
-              );
+              .subscribe(_ => {
+                this.dataStore.todos = [
+                  ...this.dataStore.todos.slice(0,i),
+                  updatedTodo,
+                  ...this.dataStore.todos.slice(i+1)
+                ];
+                this._todos.next(Object.assign({}, this.dataStore).todos);
+              });
 
   }
 
 
-  deleteTodoById(id: string): Observable<Todo> {
-    const url = `${this.api_url}/${id}`;
-    return this.http
+  deleteTodo(todo: Todo) {
+    const url = `${this.api_url}/${todo.id}`;
+    const i = this.dataStore.todos.indexOf(todo);
+    this.http
                     .delete<Todo>(url, httpOptions)
-                    .pipe(
-                      tap( _ => console.log(`delete ${id} `)),
-                      catchError(this.handleError<Todo>('deleteTodoById'))
-                    );
+                    .subscribe(_ => {
+                      this.dataStore.todos = [
+                        ...this.dataStore.todos.slice(0,i),
+                        ...this.dataStore.todos.slice(i+1)
+                      ];
+                      this._todos.next(Object.assign({}, this.dataStore).todos);
+                    });
   }
 
-  filterTodos(f123: string): Observable<Todo[]> {
+  filterTodos(f123: string) {
 
     const userId: number = +localStorage.getItem('userId');
 
@@ -83,7 +111,8 @@ export class TodoService {
           break;
     }
     console.log(`in todo.service.ts , myurl =  ${myurl}  , ${f123}`);
-    return this.http.get<Todo[]>(myurl);
+    this.http.get<Todo[]>(myurl)
+      .subscribe(todos => this.updateStoreAndSubject(todos));;
   }
 
   private handleError<T> (operation = 'operation', result?: T) {
@@ -103,6 +132,20 @@ export class TodoService {
     /** Log a HeroService message with the MessageService */
     private log(message: string) {
       console.log(`TodoService: ${message}`);
+    }
+    
+    toggleAll(){
+      this.dataStore.todos.forEach(todo => this.toggleTodo(todo));
+    }
+    clearCompleted(){
+      this.dataStore.todos
+        .filter(todo => todo.completed)
+        .forEach(todo => this.deleteTodo(todo));
+    }
+
+    private updateStoreAndSubject(todos) {
+      this.dataStore.todos = [...todos];
+      this._todos.next(Object.assign({}, this.dataStore).todos);
     }
 
 }
