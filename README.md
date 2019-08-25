@@ -25,7 +25,10 @@ constructor(private elementRef: ElementRef) {
 由于 angular2-mdl 存在很大的问题， 我不再做兼容性修改了。
 
 
-# master 版本引入了Rx
+# p223   版本引入了Rx
+
+# master    版本引入了Redux
+
 
 
 #运行
